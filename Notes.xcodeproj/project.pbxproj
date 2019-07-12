@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		98FFB1B2BC2D0755BB2DF69C /* libPods-Notes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A12742A2593C6EA0087FC931 /* libPods-Notes.a */; };
+		B370D64122D8825200264AE1 /* ColorBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B370D64022D8825200264AE1 /* ColorBoxView.swift */; };
+		B370D64322D885A800264AE1 /* ColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B370D64222D885A800264AE1 /* ColorPickerView.swift */; };
+		B370D64522D888E200264AE1 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B370D64422D888E200264AE1 /* UIColor+Extensions.swift */; };
+		B370D64722D8AD5800264AE1 /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B370D64622D8AD5800264AE1 /* Int+Extensions.swift */; };
 		B3FFD74222C0BAB600295AAA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FFD74122C0BAB600295AAA /* AppDelegate.swift */; };
 		B3FFD74422C0BAB600295AAA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FFD74322C0BAB600295AAA /* ViewController.swift */; };
 		B3FFD74722C0BAB600295AAA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3FFD74522C0BAB600295AAA /* Main.storyboard */; };
@@ -35,6 +39,10 @@
 		6FE78187F4F52B7FFF5B7B59 /* Pods-Notes.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notes.release.xcconfig"; path = "Pods/Target Support Files/Pods-Notes/Pods-Notes.release.xcconfig"; sourceTree = "<group>"; };
 		832200A25A879A8F5277805C /* Pods-Notes.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notes.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Notes/Pods-Notes.debug.xcconfig"; sourceTree = "<group>"; };
 		A12742A2593C6EA0087FC931 /* libPods-Notes.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Notes.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B370D64022D8825200264AE1 /* ColorBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorBoxView.swift; sourceTree = "<group>"; };
+		B370D64222D885A800264AE1 /* ColorPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerView.swift; sourceTree = "<group>"; };
+		B370D64422D888E200264AE1 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
+		B370D64622D8AD5800264AE1 /* Int+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
 		B3FFD73E22C0BAB600295AAA /* Notes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Notes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3FFD74122C0BAB600295AAA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B3FFD74322C0BAB600295AAA /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -114,6 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				B3FFD74122C0BAB600295AAA /* AppDelegate.swift */,
+				B3FFD74522C0BAB600295AAA /* Main.storyboard */,
 				B3FFD75322C0BAC100295AAA /* Model */,
 				B3FFD75A22C3AA3B00295AAA /* View */,
 				B3FFD75B22C3AA4000295AAA /* Controller */,
@@ -127,9 +136,9 @@
 		B3FFD75322C0BAC100295AAA /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				B3FFD75522C0BAD700295AAA /* NoteExtension.swift */,
 				B3FFD75422C0BAD700295AAA /* FileNotebook.swift */,
 				B3FFD75622C0BAD700295AAA /* Note.swift */,
-				B3FFD75522C0BAD700295AAA /* NoteExtension.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -137,7 +146,8 @@
 		B3FFD75A22C3AA3B00295AAA /* View */ = {
 			isa = PBXGroup;
 			children = (
-				B3FFD74522C0BAB600295AAA /* Main.storyboard */,
+				B370D64022D8825200264AE1 /* ColorBoxView.swift */,
+				B370D64222D885A800264AE1 /* ColorPickerView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -165,6 +175,8 @@
 			isa = PBXGroup;
 			children = (
 				B3FFD76D22C9E05E00295AAA /* Double+Extensions.swift */,
+				B370D64422D888E200264AE1 /* UIColor+Extensions.swift */,
+				B370D64622D8AD5800264AE1 /* Int+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -291,12 +303,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B370D64322D885A800264AE1 /* ColorPickerView.swift in Sources */,
 				B3FFD76E22C9E05E00295AAA /* Double+Extensions.swift in Sources */,
 				B3FFD75922C0BAD700295AAA /* Note.swift in Sources */,
 				B3FFD75722C0BAD700295AAA /* FileNotebook.swift in Sources */,
 				B3FFD75822C0BAD700295AAA /* NoteExtension.swift in Sources */,
 				B3FFD74422C0BAB600295AAA /* ViewController.swift in Sources */,
+				B370D64122D8825200264AE1 /* ColorBoxView.swift in Sources */,
+				B370D64522D888E200264AE1 /* UIColor+Extensions.swift in Sources */,
 				B3FFD74222C0BAB600295AAA /* AppDelegate.swift in Sources */,
+				B370D64722D8AD5800264AE1 /* Int+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

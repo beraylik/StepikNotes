@@ -12,7 +12,12 @@ class FileNotebook {
     private (set) var notes = [Note]()
     
     public func add(_ note: Note) {
-        notes.append(note)
+        let existingIndex: Int? = notes.firstIndex(where: { $0.uid == note.uid })
+        if let existingIndex = existingIndex {
+            notes[existingIndex] = note
+        } else {
+            notes.append(note)
+        }
     }
     
     public func remove(with uid: String) {
