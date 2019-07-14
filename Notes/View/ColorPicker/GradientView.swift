@@ -136,7 +136,9 @@ class GradientView: UIView {
         let layer = CAShapeLayer()
         layer.path = UIBezierPath(roundedRect: CGRect(x: 0, y: 0, width: 30, height: 30), cornerRadius: 15).cgPath
         layer.frame.size = CGSize(width: 30, height: 30)
-        layer.fillColor = UIColor.gray.cgColor
+        layer.strokeColor = UIColor.gray.cgColor
+        layer.lineWidth = 4
+        layer.fillColor = UIColor.clear.cgColor
         return layer
     }()
     
