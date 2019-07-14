@@ -146,8 +146,8 @@
 		B3FFD75A22C3AA3B00295AAA /* View */ = {
 			isa = PBXGroup;
 			children = (
+				F0D323E322DA716100EF48A0 /* ColorPicker */,
 				B370D64022D8825200264AE1 /* ColorBoxView.swift */,
-				B370D64222D885A800264AE1 /* ColorPickerView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -179,6 +179,14 @@
 				B370D64622D8AD5800264AE1 /* Int+Extensions.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		F0D323E322DA716100EF48A0 /* ColorPicker */ = {
+			isa = PBXGroup;
+			children = (
+				B370D64222D885A800264AE1 /* ColorPickerView.swift */,
+			);
+			path = ColorPicker;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

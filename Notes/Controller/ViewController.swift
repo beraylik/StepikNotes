@@ -20,16 +20,18 @@ class ViewController: UIViewController {
     @IBOutlet weak var contentTextView: UITextView!
     @IBOutlet weak var expireDateSwitch: UISwitch!
     @IBOutlet weak var datePicker: UIDatePicker!
+    @IBOutlet weak var changebleColorBox: ColorBoxView!
+    @IBOutlet weak var colorPicker: ColorPickerView!
     
-    @IBOutlet var datePickerHeightConstraint: NSLayoutConstraint?
+    @IBOutlet var datePickerHeightConstraint: NSLayoutConstraint!
     
     // MARK: - Interactions
     
     @IBAction func dateSwitchChanged(_ sender: UISwitch) {
         self.datePicker.isHidden = !sender.isOn
-        UIView.animate(withDuration: 1) {
-            self.datePickerHeightConstraint?.isActive = !sender.isOn
-            self.contentView.setNeedsLayout()
+        self.datePickerHeightConstraint.isActive = !sender.isOn
+        UIView.animate(withDuration: 0.5) {
+            self.contentView.layoutSubviews()
         }
     }
     
@@ -49,6 +51,7 @@ class ViewController: UIViewController {
     @IBAction func longPressRecognized(_ sender: UILongPressGestureRecognizer) {
         guard sender.state == .began else { return }
         print("longPressRecognized")
+        showColorPicker()
     }
     
     // MARK: - ViewController Lifecycle
@@ -68,11 +71,20 @@ class ViewController: UIViewController {
         
         titleTextField.attributedPlaceholder = NSAttributedString(string: "Enter title...", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
         datePicker.setValue(UIColor.white, forKeyPath: "textColor")
+        
+        // Setup Color picker
+        colorPicker.delegate = self
+        colorPicker.layer.cornerRadius = 24
+        colorPicker.layer.shadowPath = .none
+        colorPicker.layer.shadowColor = UIColor.lightGray.cgColor
+        colorPicker.layer.shadowOffset = .zero
+        colorPicker.layer.shadowRadius = 12
+        colorPicker.layer.shadowOpacity = 0.3
     }
     
     // MARK: - Keyboard handling
     
-    func adjustInsetForKeyboardShow(_ show: Bool, notification: Notification) {
+    private func adjustInsetForKeyboardShow(_ show: Bool, notification: Notification) {
         let userInfo = notification.userInfo ?? [:]
         let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         let adjustmentHeight = keyboardFrame.height - view.safeAreaInsets.bottom
@@ -93,5 +105,37 @@ class ViewController: UIViewController {
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
+    
 }
 
+// MARK: Color picker delegate
+
+extension ViewController: ColorPickerDelegate {
+    
+    func cancelPicker() {
+        dissmissColorPicker()
+    }
+    
+    func pickedColor(_ color: UIColor) {
+        changebleColorBox.backgroundColor = color
+        dissmissColorPicker()
+    }
+    
+    private func dissmissColorPicker() {
+        UIView.transition(with: colorPicker, duration: 0.5, options: .transitionCrossDissolve, animations: {
+            self.colorPicker.alpha = 0
+        }) { (_) in
+            self.colorPicker.isHidden = true
+            self.colorPicker.alpha = 1
+        }
+        
+    }
+    
+    private func showColorPicker() {
+        contentView.endEditing(true)
+        UIView.transition(with: colorPicker, duration: 0.5, options: .transitionCrossDissolve, animations: {
+            self.colorPicker.isHidden = false
+        })
+    }
+    
+}

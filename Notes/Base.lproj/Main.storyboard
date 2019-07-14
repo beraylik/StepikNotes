@@ -182,17 +182,27 @@
                                     <constraint firstItem="v8W-cD-oFf" firstAttribute="leading" secondItem="l1d-XT-KVm" secondAttribute="leading" id="zer-gF-4fZ"/>
                                 </constraints>
                             </scrollView>
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gkD-aJ-bkN" customClass="ColorPickerView" customModule="Notes" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="gkD-aJ-bkN" secondAttribute="bottom" id="3Wv-Nf-KyN"/>
+                            <constraint firstItem="gkD-aJ-bkN" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="7LC-by-v6f"/>
                             <constraint firstItem="l1d-XT-KVm" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="Kv7-vc-bjS"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="l1d-XT-KVm" secondAttribute="trailing" id="MZF-qL-Z1W"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="gkD-aJ-bkN" secondAttribute="trailing" id="elQ-cb-J5U"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="l1d-XT-KVm" secondAttribute="bottom" id="hMs-RU-DOg"/>
                             <constraint firstItem="l1d-XT-KVm" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="nWr-CG-7PV"/>
+                            <constraint firstItem="gkD-aJ-bkN" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="wkn-16-fBc"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="changebleColorBox" destination="80K-M5-iZE" id="Gli-rx-rei"/>
+                        <outlet property="colorPicker" destination="gkD-aJ-bkN" id="k6i-Iq-fsb"/>
                         <outlet property="colorsStackView" destination="dFl-p8-Mq9" id="Z9N-Oh-1KB"/>
                         <outlet property="contentTextView" destination="8KO-vu-wJT" id="i1p-JI-7WI"/>
                         <outlet property="contentView" destination="v8W-cD-oFf" id="EwL-0s-rMb"/>
