@@ -23,6 +23,7 @@
 		B3FFD76E22C9E05E00295AAA /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FFD76D22C9E05E00295AAA /* Double+Extensions.swift */; };
 		B3FFD77222C9E0E000295AAA /* ReverseSinusTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FFD77122C9E0E000295AAA /* ReverseSinusTestCase.swift */; };
 		B3FFD77422C9E37100295AAA /* NotesTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FFD77322C9E37100295AAA /* NotesTestCase.swift */; };
+		F0D323E522DB486500EF48A0 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D323E422DB486500EF48A0 /* GradientView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		B3FFD77122C9E0E000295AAA /* ReverseSinusTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReverseSinusTestCase.swift; sourceTree = "<group>"; };
 		B3FFD77322C9E37100295AAA /* NotesTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesTestCase.swift; sourceTree = "<group>"; };
 		BBF4A385D9A9597E7CE35F69 /* Pods-Notes.custom.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notes.custom.xcconfig"; path = "Pods/Target Support Files/Pods-Notes/Pods-Notes.custom.xcconfig"; sourceTree = "<group>"; };
+		F0D323E422DB486500EF48A0 /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -185,6 +187,7 @@
 			isa = PBXGroup;
 			children = (
 				B370D64222D885A800264AE1 /* ColorPickerView.swift */,
+				F0D323E422DB486500EF48A0 /* GradientView.swift */,
 			);
 			path = ColorPicker;
 			sourceTree = "<group>";
@@ -313,6 +316,7 @@
 			files = (
 				B370D64322D885A800264AE1 /* ColorPickerView.swift in Sources */,
 				B3FFD76E22C9E05E00295AAA /* Double+Extensions.swift in Sources */,
+				F0D323E522DB486500EF48A0 /* GradientView.swift in Sources */,
 				B3FFD75922C0BAD700295AAA /* Note.swift in Sources */,
 				B3FFD75722C0BAD700295AAA /* FileNotebook.swift in Sources */,
 				B3FFD75822C0BAD700295AAA /* NoteExtension.swift in Sources */,

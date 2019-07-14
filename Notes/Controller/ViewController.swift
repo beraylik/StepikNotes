@@ -41,17 +41,21 @@ class ViewController: UIViewController {
     
     @IBAction func didTapColorBox(_ sender: UITapGestureRecognizer) {
         guard let selectedBoxView = sender.view as? ColorBoxView else { return }
-        colorsStackView.arrangedSubviews.forEach { (view) in
-            guard let colorView = view as? ColorBoxView else { return }
-            colorView.isSelected = false
-        }
-        selectedBoxView.isSelected = true
+        selectColorView(selectedBoxView)
     }
     
     @IBAction func longPressRecognized(_ sender: UILongPressGestureRecognizer) {
         guard sender.state == .began else { return }
         print("longPressRecognized")
         showColorPicker()
+    }
+    
+    private func selectColorView(_ view: ColorBoxView) {
+        colorsStackView.arrangedSubviews.forEach { (view) in
+            guard let colorView = view as? ColorBoxView else { return }
+            colorView.isSelected = false
+        }
+        view.isSelected = true
     }
     
     // MARK: - ViewController Lifecycle
@@ -71,6 +75,7 @@ class ViewController: UIViewController {
         
         titleTextField.attributedPlaceholder = NSAttributedString(string: "Enter title...", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
         datePicker.setValue(UIColor.white, forKeyPath: "textColor")
+        setGradientLayer(view: changebleColorBox)
         
         // Setup Color picker
         colorPicker.delegate = self
@@ -80,6 +85,25 @@ class ViewController: UIViewController {
         colorPicker.layer.shadowOffset = .zero
         colorPicker.layer.shadowRadius = 12
         colorPicker.layer.shadowOpacity = 0.3
+    }
+    
+    private func setGradientLayer(view: UIView) {
+        let rainbow: [UIColor] = [.red, .orange, .yellow, .green, .cyan, .blue, .purple, .red]
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = rainbow.map({ $0.cgColor })
+        gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
+        gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
+        gradientLayer.frame = view.bounds
+        
+        let brightnessLayer = CAGradientLayer()
+        brightnessLayer.colors = [UIColor.white.cgColor, UIColor.clear.cgColor, UIColor.black.cgColor]
+        brightnessLayer.startPoint = CGPoint(x: 0.5, y: 0)
+        brightnessLayer.endPoint = CGPoint(x: 0.5, y: 1)
+        brightnessLayer.frame = view.bounds
+        
+        view.backgroundColor = .clear
+        view.layer.addSublayer(gradientLayer)
+        view.layer.addSublayer(brightnessLayer)
     }
     
     // MARK: - Keyboard handling
@@ -118,6 +142,11 @@ extension ViewController: ColorPickerDelegate {
     
     func pickedColor(_ color: UIColor) {
         changebleColorBox.backgroundColor = color
+        changebleColorBox.layer.sublayers?.forEach({ (layer) in
+            let gradient = layer as? CAGradientLayer
+            gradient?.removeFromSuperlayer()
+        })
+        selectColorView(changebleColorBox)
         dissmissColorPicker()
     }
     

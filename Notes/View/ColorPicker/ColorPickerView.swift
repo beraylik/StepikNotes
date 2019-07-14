@@ -41,7 +41,8 @@ class ColorPickerView: UIView {
     // MARK: - Interactions
     
     @objc private func updatedSliderValue(sender: UISlider) {
-        print(sender.value)
+        let percent: CGFloat = CGFloat(sender.value)
+        colorsPallete.updateBrightness(percent)
     }
     
     @objc private func saveButtonPressed() {
@@ -51,10 +52,27 @@ class ColorPickerView: UIView {
     @objc private func cancelButtonPressed() {
         delegate?.cancelPicker()
     }
+
+    private func handleNewColor(_ color: UIColor) {
+        self.selectedColor = color
+        self.currentColorView.backgroundColor = color
+        self.colorCodeLabel.text = color.hexString
+        
+        var hue, saturation, brightness, alpha: CGFloat
+        hue = 0; saturation = 0; brightness = 0; alpha = 0;
+        color.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+        self.brightnessSlider.value = Float(brightness)
+    }
     
     // MARK: - Configure UI
     
-    private func setupViews() {        
+    private func setupViews() {
+        handleNewColor(selectedColor)
+        colorsPallete.colorDragHandler = { (color: UIColor) in
+            self.handleNewColor(color)
+        }
+        colorsPallete.targetColor = selectedColor
+        
         brightnessSlider.addTarget(self, action: #selector(updatedSliderValue(sender:)), for: .valueChanged)
         saveButton.addTarget(self, action: #selector(saveButtonPressed), for: .touchUpInside)
         cancelButton.addTarget(self, action: #selector(cancelButtonPressed), for: .touchUpInside)
@@ -144,8 +162,8 @@ class ColorPickerView: UIView {
         return label
     }()
     
-    private let colorsPallete: UIView = {
-        let view = UIView()
+    private let colorsPallete: GradientView = {
+        let view = GradientView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .green
         return view
