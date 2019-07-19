@@ -11,6 +11,10 @@ class FileNotebook {
     private let filePath = "notes_storage"
     private (set) var notes = [Note]()
     
+    // MARK: - Singletone instanse
+    static let shared = FileNotebook()
+    private init() {}
+    
     public func add(_ note: Note) {
         let existingIndex: Int? = notes.firstIndex(where: { $0.uid == note.uid })
         if let existingIndex = existingIndex {

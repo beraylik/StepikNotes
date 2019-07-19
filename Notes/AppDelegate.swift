@@ -18,9 +18,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         prepareLogger()
         DDLogInfo("\(type(of: self)): \(#function)")
+        
+        FileNotebook.shared.loadFromFile()
         return true
     }
 
+    func applicationWillTerminate(_ application: UIApplication) {
+        DDLogInfo("\(type(of: self)): \(#function)")
+        FileNotebook.shared.saveToFile()
+    }
+    
     private func prepareLogger() {
         DDLog.add(DDOSLogger.sharedInstance)
         

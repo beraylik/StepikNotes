@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="101" id="KGk-i7-Jjw" customClass="NoteTableViewCell" customModule="Notes" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="101"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="100.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KL2-VO-Blm" customClass="ColorBoxView" customModule="Notes" customModuleProvider="target">
+                        <rect key="frame" x="8" y="8" width="20" height="20"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="73x-3E-Z0U"/>
+                            <constraint firstAttribute="width" constant="20" id="WX3-x7-UEw"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                <real key="value" value="1"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sg2-OK-gie">
+                        <rect key="frame" x="36" y="8" width="268" height="20"/>
+                        <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                        <color key="textColor" red="0.96650340030000004" green="0.96650340030000004" blue="0.96650340030000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mPb-6l-YFn">
+                        <rect key="frame" x="8" y="36" width="296" height="56.5"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <constraints>
+                    <constraint firstAttribute="bottom" secondItem="mPb-6l-YFn" secondAttribute="bottom" constant="8" id="5l2-z9-Pil"/>
+                    <constraint firstItem="Sg2-OK-gie" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="Aqo-Wt-pvw"/>
+                    <constraint firstItem="KL2-VO-Blm" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="MAT-tW-cgE"/>
+                    <constraint firstItem="mPb-6l-YFn" firstAttribute="top" secondItem="Sg2-OK-gie" secondAttribute="bottom" constant="8" id="cbU-db-7FH"/>
+                    <constraint firstAttribute="trailing" secondItem="mPb-6l-YFn" secondAttribute="trailing" constant="16" id="d6B-yT-emM"/>
+                    <constraint firstItem="Sg2-OK-gie" firstAttribute="bottom" secondItem="KL2-VO-Blm" secondAttribute="bottom" id="kPt-SG-Erw"/>
+                    <constraint firstItem="mPb-6l-YFn" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="kbJ-3v-MwF"/>
+                    <constraint firstItem="KL2-VO-Blm" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="rE2-V6-fa2"/>
+                    <constraint firstAttribute="trailing" secondItem="Sg2-OK-gie" secondAttribute="trailing" constant="16" id="rsQ-Bo-h1o"/>
+                    <constraint firstItem="Sg2-OK-gie" firstAttribute="leading" secondItem="KL2-VO-Blm" secondAttribute="trailing" constant="8" id="vnA-6q-wGJ"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="colorView" destination="KL2-VO-Blm" id="A3a-dr-Gtq"/>
+                <outlet property="contentLabel" destination="mPb-6l-YFn" id="Jz8-OJ-sHs"/>
+                <outlet property="titleLabel" destination="Sg2-OK-gie" id="4OQ-52-BHo"/>
+            </connections>
+            <point key="canvasLocation" x="131.8840579710145" y="137.61160714285714"/>
+        </tableViewCell>
+    </objects>
+</document>

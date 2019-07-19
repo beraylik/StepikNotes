@@ -9,8 +9,13 @@
 import UIKit
 import CocoaLumberjack
 
-class ViewController: UIViewController {
+class EditNoteViewController: UIViewController {
 
+    // MARK: - Properties
+    
+    var note: Note?
+    private var selectedColor: UIColor = .white
+    
     // MARK: - UI Outlets
     
     @IBOutlet weak var colorsStackView: UIStackView!
@@ -24,6 +29,17 @@ class ViewController: UIViewController {
     @IBOutlet var datePickerHeightConstraint: NSLayoutConstraint?
     
     // MARK: - Interactions
+    
+    @IBAction func saveButtonTapped(_ sender: Any) {
+        guard let title = titleTextField.text else { return }
+        guard let content = contentTextView.text else { return }
+        let expireDate: Date? = expireDateSwitch.isOn ? datePicker.date : nil
+        let color = selectedColor
+        
+        let newNote = Note(uid: note?.uid, title: title, content: content, importance: .normal, color: color, selfDestruction: expireDate)
+        FileNotebook.shared.add(newNote)
+        navigationController?.popViewController(animated: true)
+    }
     
     @IBAction func dateSwitchChanged(_ sender: UISwitch) {
         self.datePicker.isHidden = !sender.isOn
@@ -44,6 +60,7 @@ class ViewController: UIViewController {
             colorView.isSelected = false
         }
         selectedBoxView.isSelected = true
+        selectedColor = selectedBoxView.backgroundColor ?? .white
     }
     
     @IBAction func longPressRecognized(_ sender: UILongPressGestureRecognizer) {
@@ -59,6 +76,21 @@ class ViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         setupViews()
+        setupData()
+    }
+    
+    private func setupData() {
+        guard let note = note else { return }
+        
+        titleTextField.text = note.title
+        contentTextView.text = note.content
+        if let date = note.selfDestruction {
+            expireDateSwitch.setOn(true, animated: false)
+            datePicker.date = date
+        }
+        
+        let color = selectedColor
+        
     }
     
     // MARK: - Configure UI
