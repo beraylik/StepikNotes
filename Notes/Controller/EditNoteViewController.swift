@@ -25,8 +25,10 @@ class EditNoteViewController: UIViewController {
     @IBOutlet weak var contentTextView: UITextView!
     @IBOutlet weak var expireDateSwitch: UISwitch!
     @IBOutlet weak var datePicker: UIDatePicker!
+    @IBOutlet weak var changebleColorBox: ColorBoxView!
+    @IBOutlet weak var colorPicker: ColorPickerView!
     
-    @IBOutlet var datePickerHeightConstraint: NSLayoutConstraint?
+    @IBOutlet var datePickerHeightConstraint: NSLayoutConstraint!
     
     // MARK: - Interactions
     
@@ -43,9 +45,9 @@ class EditNoteViewController: UIViewController {
     
     @IBAction func dateSwitchChanged(_ sender: UISwitch) {
         self.datePicker.isHidden = !sender.isOn
-        UIView.animate(withDuration: 1) {
-            self.datePickerHeightConstraint?.isActive = !sender.isOn
-            self.contentView.setNeedsLayout()
+        self.datePickerHeightConstraint.isActive = !sender.isOn
+        UIView.animate(withDuration: 0.5) {
+            self.contentView.layoutSubviews()
         }
     }
     
@@ -55,17 +57,22 @@ class EditNoteViewController: UIViewController {
     
     @IBAction func didTapColorBox(_ sender: UITapGestureRecognizer) {
         guard let selectedBoxView = sender.view as? ColorBoxView else { return }
-        colorsStackView.arrangedSubviews.forEach { (view) in
-            guard let colorView = view as? ColorBoxView else { return }
-            colorView.isSelected = false
-        }
-        selectedBoxView.isSelected = true
+        selectColorView(selectedBoxView)
         selectedColor = selectedBoxView.backgroundColor ?? .white
     }
     
     @IBAction func longPressRecognized(_ sender: UILongPressGestureRecognizer) {
         guard sender.state == .began else { return }
         print("longPressRecognized")
+        showColorPicker()
+    }
+    
+    private func selectColorView(_ view: ColorBoxView) {
+        colorsStackView.arrangedSubviews.forEach { (view) in
+            guard let colorView = view as? ColorBoxView else { return }
+            colorView.isSelected = false
+        }
+        view.isSelected = true
     }
     
     // MARK: - ViewController Lifecycle
@@ -85,12 +92,13 @@ class EditNoteViewController: UIViewController {
         titleTextField.text = note.title
         contentTextView.text = note.content
         if let date = note.selfDestruction {
-            expireDateSwitch.setOn(true, animated: false)
+            expireDateSwitch.isOn = true
+            dateSwitchChanged(expireDateSwitch)
             datePicker.date = date
         }
-        
-        let color = selectedColor
-        
+        if note.color != .white {
+           pickedColor(note.color)
+        }
     }
     
     // MARK: - Configure UI
@@ -100,6 +108,35 @@ class EditNoteViewController: UIViewController {
         
         titleTextField.attributedPlaceholder = NSAttributedString(string: "Enter title...", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
         datePicker.setValue(UIColor.white, forKeyPath: "textColor")
+        setGradientLayer(view: changebleColorBox)
+        
+        // Setup Color picker
+        colorPicker.delegate = self
+        colorPicker.layer.cornerRadius = 24
+        colorPicker.layer.shadowPath = .none
+        colorPicker.layer.shadowColor = UIColor.lightGray.cgColor
+        colorPicker.layer.shadowOffset = .zero
+        colorPicker.layer.shadowRadius = 12
+        colorPicker.layer.shadowOpacity = 0.3
+    }
+    
+    private func setGradientLayer(view: UIView) {
+        let rainbow: [UIColor] = [.red, .orange, .yellow, .green, .cyan, .blue, .purple, .red]
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = rainbow.map({ $0.cgColor })
+        gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
+        gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
+        gradientLayer.frame = view.bounds
+        
+        let brightnessLayer = CAGradientLayer()
+        brightnessLayer.colors = [UIColor.white.cgColor, UIColor.clear.cgColor, UIColor.black.cgColor]
+        brightnessLayer.startPoint = CGPoint(x: 0.5, y: 0)
+        brightnessLayer.endPoint = CGPoint(x: 0.5, y: 1)
+        brightnessLayer.frame = view.bounds
+        
+        view.backgroundColor = .clear
+        view.layer.addSublayer(gradientLayer)
+        view.layer.addSublayer(brightnessLayer)
     }
     
     // MARK: - Keyboard handling
@@ -127,3 +164,40 @@ class EditNoteViewController: UIViewController {
     }
 }
 
+// MARK: Color picker delegate
+
+extension EditNoteViewController: ColorPickerDelegate {
+    
+    func cancelPicker() {
+        dissmissColorPicker()
+    }
+    
+    func pickedColor(_ color: UIColor) {
+        changebleColorBox.backgroundColor = color
+        changebleColorBox.layer.sublayers?.forEach({ (layer) in
+            let gradient = layer as? CAGradientLayer
+            gradient?.removeFromSuperlayer()
+        })
+        selectedColor = color
+        selectColorView(changebleColorBox)
+        dissmissColorPicker()
+    }
+    
+    private func dissmissColorPicker() {
+        UIView.transition(with: colorPicker, duration: 0.5, options: .transitionCrossDissolve, animations: {
+            self.colorPicker.alpha = 0
+        }) { (_) in
+            self.colorPicker.isHidden = true
+            self.colorPicker.alpha = 1
+        }
+        
+    }
+    
+    private func showColorPicker() {
+        contentView.endEditing(true)
+        UIView.transition(with: colorPicker, duration: 0.5, options: .transitionCrossDissolve, animations: {
+            self.colorPicker.isHidden = false
+        })
+    }
+    
+}
