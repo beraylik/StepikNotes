@@ -34,6 +34,11 @@ class NotesViewController: UIViewController {
         tableView.reloadData()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        print(#function)
+        FileNotebook.shared.saveToFile()
+    }
+    
     private func setupTableView() {
         let nib = UINib(nibName: cellClassName, bundle: Bundle.main)
         tableView.register(nib, forCellReuseIdentifier: cellId)
