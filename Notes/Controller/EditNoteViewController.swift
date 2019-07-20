@@ -26,15 +26,14 @@ class EditNoteViewController: UIViewController {
     @IBOutlet weak var expireDateSwitch: UISwitch!
     @IBOutlet weak var datePicker: UIDatePicker!
     @IBOutlet weak var changebleColorBox: ColorBoxView!
-    @IBOutlet weak var colorPicker: ColorPickerView!
     
     @IBOutlet var datePickerHeightConstraint: NSLayoutConstraint!
     
     // MARK: - Interactions
     
     @IBAction func saveButtonTapped(_ sender: Any) {
-        guard let title = titleTextField.text else { return }
-        guard let content = contentTextView.text else { return }
+        guard let title = titleTextField.text, !title.isEmpty else { return }
+        guard let content = contentTextView.text, !content.isEmpty else { return }
         let expireDate: Date? = expireDateSwitch.isOn ? datePicker.date : nil
         let color = selectedColor
         
@@ -109,15 +108,6 @@ class EditNoteViewController: UIViewController {
         titleTextField.attributedPlaceholder = NSAttributedString(string: "Enter title...", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
         datePicker.setValue(UIColor.white, forKeyPath: "textColor")
         setGradientLayer(view: changebleColorBox)
-        
-        // Setup Color picker
-        colorPicker.delegate = self
-        colorPicker.layer.cornerRadius = 24
-        colorPicker.layer.shadowPath = .none
-        colorPicker.layer.shadowColor = UIColor.lightGray.cgColor
-        colorPicker.layer.shadowOffset = .zero
-        colorPicker.layer.shadowRadius = 12
-        colorPicker.layer.shadowOpacity = 0.3
     }
     
     private func setGradientLayer(view: UIView) {
@@ -169,7 +159,7 @@ class EditNoteViewController: UIViewController {
 extension EditNoteViewController: ColorPickerDelegate {
     
     func cancelPicker() {
-        dissmissColorPicker()
+        // unused
     }
     
     func pickedColor(_ color: UIColor) {
@@ -180,24 +170,14 @@ extension EditNoteViewController: ColorPickerDelegate {
         })
         selectedColor = color
         selectColorView(changebleColorBox)
-        dissmissColorPicker()
-    }
-    
-    private func dissmissColorPicker() {
-        UIView.transition(with: colorPicker, duration: 0.5, options: .transitionCrossDissolve, animations: {
-            self.colorPicker.alpha = 0
-        }) { (_) in
-            self.colorPicker.isHidden = true
-            self.colorPicker.alpha = 1
-        }
-        
     }
     
     private func showColorPicker() {
         contentView.endEditing(true)
-        UIView.transition(with: colorPicker, duration: 0.5, options: .transitionCrossDissolve, animations: {
-            self.colorPicker.isHidden = false
-        })
+        let pickerVC = ColorPickerVC()
+        pickerVC.delegate = self
+        navigationController?.pushViewController(pickerVC, animated: true)
     }
     
 }
+
