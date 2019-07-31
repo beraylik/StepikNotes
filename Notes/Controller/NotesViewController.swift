@@ -29,9 +29,26 @@ class NotesViewController: UIViewController {
         setupTableView()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        notes = FileNotebook.shared.notes
-        tableView.reloadData()
+    override func viewWillAppear(_ animated: Bool) { // TODO: Fix fetching data
+        let backendQueue = OperationQueue()
+        let dbQueue = OperationQueue()
+        let commonQueue = OperationQueue()
+        
+        let loadNotesOperation = LoadNotesOperation(
+            notebook: FileNotebook.shared,
+            backendQueue: backendQueue,
+            dbQueue: dbQueue
+        )
+        commonQueue.addOperation(loadNotesOperation)
+        
+        let updateUI = BlockOperation { [weak self] in
+            if let notes = loadNotesOperation.result {
+                self?.notes = notes
+                self?.tableView.reloadData()
+            }
+        }
+        OperationQueue.main.addOperation(updateUI)
+        // while RunLoop.current.run(mode: .default, before: .distantFuture) {}
     }
     
     override func viewWillDisappear(_ animated: Bool) {
