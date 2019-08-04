@@ -28,6 +28,10 @@ class FileNotebook {
         notes.removeAll(where: { $0.uid == uid })
     }
     
+    public func replace(withNotes: [Note]) {
+        self.notes = withNotes
+    }
+    
     public func saveToFile() {
         var path = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         path.appendPathComponent(filePath, isDirectory: false)

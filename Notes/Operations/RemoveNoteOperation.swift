@@ -19,29 +19,31 @@ class RemoveNoteOperation: AsyncOperation {
     init(note: Note, notebook: FileNotebook, backendQueue: OperationQueue, dbQueue: OperationQueue) {
         self.note = note
         self.notebook = notebook
-        
+
         removeFromDb = RemoveNoteDBOperation(note: note, notebook: notebook)
         
         super.init()
         
-        removeFromDb.completionBlock = {
-            let saveToBackend = SaveNotesBackendOperation(notes: notebook.notes)
-            self.saveToBackend = saveToBackend
-            self.addDependency(saveToBackend)
-            backendQueue.addOperation(saveToBackend)
-        }
-        
         addDependency(removeFromDb)
         dbQueue.addOperation(removeFromDb)
+        
+        removeFromDb.completionBlock = {
+            let saveToBackend = SaveNotesBackendOperation(notes: notebook.notes)
+            saveToBackend.completionBlock = {
+                switch saveToBackend.result! {
+                case .success:
+                    self.result = true
+                case .failure:
+                    self.result = false
+                }
+                self.finish()
+            }
+            backendQueue.addOperation(saveToBackend)
+        }
     }
     
     override func main() {
-        switch saveToBackend!.result! {
-        case .success:
-            result = true
-        case .failure:
-            result = false
-        }
+        result = removeFromDb.result
         finish()
     }
     

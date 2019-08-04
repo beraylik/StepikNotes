@@ -30,6 +30,27 @@ class NotesViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) { // TODO: Fix fetching data
+        loadNotes()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        print(#function)
+        FileNotebook.shared.saveToFile()
+    }
+    
+    private func setupTableView() {
+        let nib = UINib(nibName: cellClassName, bundle: Bundle.main)
+        tableView.register(nib, forCellReuseIdentifier: cellId)
+        tableView.isEditing = false
+        tableView.backgroundColor = .darkGray
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.tableFooterView = UIView(frame: .zero)
+    }
+    
+    // MARK: - Interactions
+    
+    private func loadNotes() {
         let backendQueue = OperationQueue()
         let dbQueue = OperationQueue()
         let commonQueue = OperationQueue()
@@ -48,23 +69,32 @@ class NotesViewController: UIViewController {
             }
         }
         OperationQueue.main.addOperation(updateUI)
-        // while RunLoop.current.run(mode: .default, before: .distantFuture) {}
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        print(#function)
-        FileNotebook.shared.saveToFile()
+    private func deleteNote(at indexPath: IndexPath) {
+        let note = notes[indexPath.row]
+        
+        let backendQueue = OperationQueue()
+        let dbQueue = OperationQueue()
+        let commonQueue = OperationQueue()
+        
+        let removeNoteOperation = RemoveNoteOperation(
+            note: note,
+            notebook: FileNotebook.shared,
+            backendQueue: backendQueue,
+            dbQueue: dbQueue
+        )
+        commonQueue.addOperation(removeNoteOperation)
+        
+        let updateUI = BlockOperation { [weak self] in
+            self?.notes.remove(at: indexPath.row)
+            self?.tableView.deleteRows(at: [indexPath], with: .fade)
+        }
+        removeNoteOperation.completionBlock = {
+            OperationQueue.main.addOperation(updateUI)
+        }
     }
     
-    private func setupTableView() {
-        let nib = UINib(nibName: cellClassName, bundle: Bundle.main)
-        tableView.register(nib, forCellReuseIdentifier: cellId)
-        tableView.isEditing = false
-        tableView.backgroundColor = .darkGray
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.tableFooterView = UIView(frame: .zero)
-    }
 }
 
 // MARK: - TableView DataSource
@@ -79,9 +109,7 @@ extension NotesViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         guard editingStyle == .delete else { return }
-        FileNotebook.shared.remove(with: notes[indexPath.row].uid)
-        notes = FileNotebook.shared.notes
-        tableView.deleteRows(at: [indexPath], with: .fade)
+        deleteNote(at: indexPath)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

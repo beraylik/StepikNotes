@@ -1,10 +1,7 @@
 import Foundation
 
 class SaveNoteOperation: AsyncOperation {
-    private let note: Note
-    private let notebook: FileNotebook
     private let saveToDb: SaveNoteDBOperation
-    private var saveToBackend: SaveNotesBackendOperation?
     
     private(set) var result: Bool? = false
     
@@ -12,31 +9,32 @@ class SaveNoteOperation: AsyncOperation {
          notebook: FileNotebook,
          backendQueue: OperationQueue,
          dbQueue: OperationQueue) {
-        self.note = note
-        self.notebook = notebook
         
         saveToDb = SaveNoteDBOperation(note: note, notebook: notebook)
-
-        super.init()
         
-        saveToDb.completionBlock = {
-            let saveToBackend = SaveNotesBackendOperation(notes: notebook.notes)
-            self.saveToBackend = saveToBackend
-            self.addDependency(saveToBackend)
-            backendQueue.addOperation(saveToBackend)
-        }
+        super.init()
         
         addDependency(saveToDb)
         dbQueue.addOperation(saveToDb)
+        
+        saveToDb.completionBlock = {
+            let saveToBackend = SaveNotesBackendOperation(notes: notebook.notes)
+            saveToBackend.completionBlock = {
+                switch saveToBackend.result! {
+                case .success:
+                    self.result = true
+                case .failure:
+                    self.result = false
+                }
+                self.finish()
+            }
+            backendQueue.addOperation(saveToBackend)
+        }
+        
     }
     
     override func main() {
-        switch saveToBackend!.result! {
-        case .success:
-            result = true
-        case .failure:
-            result = false
-        }
+        result = saveToDb.result
         finish()
     }
 }

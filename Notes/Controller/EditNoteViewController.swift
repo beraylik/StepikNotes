@@ -38,8 +38,7 @@ class EditNoteViewController: UIViewController {
         let color = selectedColor
         
         let newNote = Note(uid: note?.uid, title: title, content: content, importance: .normal, color: color, selfDestruction: expireDate)
-        FileNotebook.shared.add(newNote)
-        navigationController?.popViewController(animated: true)
+        saveNote(newNote)
     }
     
     @IBAction func dateSwitchChanged(_ sender: UISwitch) {
@@ -72,6 +71,27 @@ class EditNoteViewController: UIViewController {
             colorView.isSelected = false
         }
         view.isSelected = true
+    }
+    
+    private func saveNote(_ note: Note) {
+        let backendQueue = OperationQueue()
+        let dbQueue = OperationQueue()
+        let commonQueue = OperationQueue()
+        
+        let saveNoteOperation = SaveNoteOperation(
+            note: note,
+            notebook: FileNotebook.shared,
+            backendQueue: backendQueue,
+            dbQueue: dbQueue
+        )
+        commonQueue.addOperation(saveNoteOperation)
+        
+        let updateUI = BlockOperation { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
+        saveNoteOperation.completionBlock = {
+            OperationQueue.main.addOperation(updateUI)
+        }
     }
     
     // MARK: - ViewController Lifecycle

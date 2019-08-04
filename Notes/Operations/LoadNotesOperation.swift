@@ -12,7 +12,6 @@ class LoadNotesOperation: AsyncOperation {
     private let notebook: FileNotebook
     private let loadFromDb: LoadNotesDBOperation
     private let loadFromBackend: LoadNotesBackendOperation
-    private var saveToDb: SaveNoteDBOperation?
     
     private(set) var result: [Note]?
     
@@ -20,28 +19,28 @@ class LoadNotesOperation: AsyncOperation {
         self.notebook = notebook
         
         loadFromBackend = LoadNotesBackendOperation()
-        loadFromDb = LoadNotesDBOperation(notebook: self.notebook)
+        loadFromDb = LoadNotesDBOperation(notebook: notebook)
         
         super.init()
         
+        addDependency(loadFromBackend)
+        backendQueue.addOperation(loadFromBackend)
+        
+        addDependency(loadFromDb)
         loadFromBackend.completionBlock = { 
-            self.addDependency(self.loadFromDb)
             dbQueue.addOperation(self.loadFromDb)
         }
         
-        addDependency(loadFromBackend)
-        backendQueue.addOperation(loadFromBackend)
     }
     
     override func main() {
-        switch loadFromBackend.result! {
+        guard let backendStatus = loadFromBackend.result, isCancelled != true else {
+            return
+        }
+        
+        switch backendStatus {
         case let .success(value):
-            for note in notebook.notes {
-                notebook.remove(with: note.uid)
-            }
-            for note in value {
-                notebook.add(note)
-            }
+            notebook.replace(withNotes: value)
             result = value
         case .failure:
             result = loadFromDb.result
