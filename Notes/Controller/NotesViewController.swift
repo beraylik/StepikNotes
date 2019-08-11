@@ -27,9 +27,10 @@ class NotesViewController: UIViewController {
         super.viewDidLoad()
         
         setupTableView()
+        updateToken()
     }
     
-    override func viewWillAppear(_ animated: Bool) { // TODO: Fix fetching data
+    override func viewWillAppear(_ animated: Bool) {
         loadNotes()
     }
     
@@ -50,6 +51,19 @@ class NotesViewController: UIViewController {
     
     // MARK: - Interactions
     
+    @objc private func updateToken() {
+        guard let token = GithubService.shared.gitHubToken, !token.isEmpty else {
+            requestToken()
+            return
+        }
+    }
+    
+    private func requestToken() {
+        let requestTokenViewController = AuthViewController()
+        requestTokenViewController.delegate = self
+        present(requestTokenViewController, animated: false, completion: nil)
+    }
+    
     private func loadNotes() {
         let backendQueue = OperationQueue()
         let dbQueue = OperationQueue()
@@ -68,7 +82,9 @@ class NotesViewController: UIViewController {
                 self?.tableView.reloadData()
             }
         }
-        OperationQueue.main.addOperation(updateUI)
+        loadNotesOperation.completionBlock = {
+            OperationQueue.main.addOperation(updateUI)
+        }
     }
     
     private func deleteNote(at indexPath: IndexPath) {
@@ -129,4 +145,15 @@ extension NotesViewController: UITableViewDelegate {
         navigationController?.pushViewController(editView, animated: true)
     }
     
+}
+
+// MARK: - AuthViewController Delegate
+
+extension NotesViewController: AuthViewControllerDelegate {
+    func handleTokenChanged(token: String) {
+        GithubService.shared.gitHubToken = token
+    }
+    func finishedAuth(successful: Bool) {
+        loadNotes()
+    }
 }

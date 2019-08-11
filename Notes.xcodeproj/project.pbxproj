@@ -36,6 +36,11 @@
 		B3FFD76E22C9E05E00295AAA /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FFD76D22C9E05E00295AAA /* Double+Extensions.swift */; };
 		B3FFD77222C9E0E000295AAA /* ReverseSinusTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FFD77122C9E0E000295AAA /* ReverseSinusTestCase.swift */; };
 		B3FFD77422C9E37100295AAA /* NotesTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FFD77322C9E37100295AAA /* NotesTestCase.swift */; };
+		F023D7CE22FF163100B132B4 /* GithubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F023D7CD22FF163100B132B4 /* GithubService.swift */; };
+		F023D7D222FF448400B132B4 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F023D7D122FF448400B132B4 /* AuthViewController.swift */; };
+		F023D7D422FF56F100B132B4 /* NotesNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F023D7D322FF56F100B132B4 /* NotesNetworkService.swift */; };
+		F023D7D8230099B000B132B4 /* GithubAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = F023D7D7230099B000B132B4 /* GithubAuth.swift */; };
+		F023D7DA230099E000B132B4 /* Gist.swift in Sources */ = {isa = PBXBuildFile; fileRef = F023D7D9230099E000B132B4 /* Gist.swift */; };
 		F0D3243B22E2E64A00EF48A0 /* ColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D3243922E2E64A00EF48A0 /* ColorPickerView.swift */; };
 		F0D3243C22E2E64A00EF48A0 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D3243A22E2E64A00EF48A0 /* GradientView.swift */; };
 		F0D3243E22E2E6CF00EF48A0 /* ColorPickerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D3243D22E2E6CF00EF48A0 /* ColorPickerVC.swift */; };
@@ -93,6 +98,11 @@
 		B3FFD77122C9E0E000295AAA /* ReverseSinusTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReverseSinusTestCase.swift; sourceTree = "<group>"; };
 		B3FFD77322C9E37100295AAA /* NotesTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesTestCase.swift; sourceTree = "<group>"; };
 		BBF4A385D9A9597E7CE35F69 /* Pods-Notes.custom.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notes.custom.xcconfig"; path = "Pods/Target Support Files/Pods-Notes/Pods-Notes.custom.xcconfig"; sourceTree = "<group>"; };
+		F023D7CD22FF163100B132B4 /* GithubService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubService.swift; sourceTree = "<group>"; };
+		F023D7D122FF448400B132B4 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
+		F023D7D322FF56F100B132B4 /* NotesNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesNetworkService.swift; sourceTree = "<group>"; };
+		F023D7D7230099B000B132B4 /* GithubAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubAuth.swift; sourceTree = "<group>"; };
+		F023D7D9230099E000B132B4 /* Gist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gist.swift; sourceTree = "<group>"; };
 		F0D3243922E2E64A00EF48A0 /* ColorPickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPickerView.swift; sourceTree = "<group>"; };
 		F0D3243A22E2E64A00EF48A0 /* GradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		F0D3243D22E2E6CF00EF48A0 /* ColorPickerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerVC.swift; sourceTree = "<group>"; };
@@ -208,6 +218,7 @@
 			children = (
 				B3FFD74122C0BAB600295AAA /* AppDelegate.swift */,
 				B3FFD74522C0BAB600295AAA /* Main.storyboard */,
+				F023D7CC22FF161B00B132B4 /* Services */,
 				B33C6BC822F1629300D9C500 /* Operations */,
 				B3FFD75322C0BAC100295AAA /* Model */,
 				B3FFD75A22C3AA3B00295AAA /* View */,
@@ -222,6 +233,7 @@
 		B3FFD75322C0BAC100295AAA /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				F023D7D62300999E00B132B4 /* GithubModels */,
 				B3FFD75522C0BAD700295AAA /* NoteExtension.swift */,
 				B3FFD75422C0BAD700295AAA /* FileNotebook.swift */,
 				B3FFD75622C0BAD700295AAA /* Note.swift */,
@@ -244,8 +256,9 @@
 		B3FFD75B22C3AA4000295AAA /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				B3FFD74322C0BAB600295AAA /* EditNoteViewController.swift */,
+				F023D7D122FF448400B132B4 /* AuthViewController.swift */,
 				B30F36C422E1A55100756B16 /* NotesViewController.swift */,
+				B3FFD74322C0BAB600295AAA /* EditNoteViewController.swift */,
 				F0D3243D22E2E6CF00EF48A0 /* ColorPickerVC.swift */,
 				F0D3243F22E311A800EF48A0 /* ScrollViewController.swift */,
 				F0D3244122E315E700EF48A0 /* ImageCollectionVC.swift */,
@@ -272,6 +285,24 @@
 				B370D64622D8AD5800264AE1 /* Int+Extensions.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		F023D7CC22FF161B00B132B4 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				F023D7CD22FF163100B132B4 /* GithubService.swift */,
+				F023D7D322FF56F100B132B4 /* NotesNetworkService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		F023D7D62300999E00B132B4 /* GithubModels */ = {
+			isa = PBXGroup;
+			children = (
+				F023D7D7230099B000B132B4 /* GithubAuth.swift */,
+				F023D7D9230099E000B132B4 /* Gist.swift */,
+			);
+			path = GithubModels;
 			sourceTree = "<group>";
 		};
 		F0D3243822E2E64A00EF48A0 /* ColorPicker */ = {
@@ -419,11 +450,14 @@
 				F0D3243E22E2E6CF00EF48A0 /* ColorPickerVC.swift in Sources */,
 				B3FFD76E22C9E05E00295AAA /* Double+Extensions.swift in Sources */,
 				B3FFD75922C0BAD700295AAA /* Note.swift in Sources */,
+				F023D7D222FF448400B132B4 /* AuthViewController.swift in Sources */,
 				B3FFD75722C0BAD700295AAA /* FileNotebook.swift in Sources */,
 				B3FFD75822C0BAD700295AAA /* NoteExtension.swift in Sources */,
 				B33C6BE022F18D1800D9C500 /* RemoveNoteOperation.swift in Sources */,
 				B3FFD74422C0BAB600295AAA /* EditNoteViewController.swift in Sources */,
 				B30F36C522E1A55100756B16 /* NotesViewController.swift in Sources */,
+				F023D7DA230099E000B132B4 /* Gist.swift in Sources */,
+				F023D7CE22FF163100B132B4 /* GithubService.swift in Sources */,
 				F0D3244022E311A900EF48A0 /* ScrollViewController.swift in Sources */,
 				B370D64122D8825200264AE1 /* ColorBoxView.swift in Sources */,
 				B33C6BD322F1629300D9C500 /* SaveNoteOperation.swift in Sources */,
@@ -438,9 +472,11 @@
 				B33C6BD822F1638800D9C500 /* LoadNotesBackendOperation.swift in Sources */,
 				B3FFD74222C0BAB600295AAA /* AppDelegate.swift in Sources */,
 				F0D3244522E318E400EF48A0 /* GalleryCell.swift in Sources */,
+				F023D7D422FF56F100B132B4 /* NotesNetworkService.swift in Sources */,
 				B33C6BD622F1629300D9C500 /* SaveNotesBackendOperation.swift in Sources */,
 				B33C6BDC22F16DF200D9C500 /* RemoveNoteDBOperation.swift in Sources */,
 				B33C6BDA22F16DCF00D9C500 /* LoadNotesDBOperation.swift in Sources */,
+				F023D7D8230099B000B132B4 /* GithubAuth.swift in Sources */,
 				F0D3243C22E2E64A00EF48A0 /* GradientView.swift in Sources */,
 				B33C6BD122F1629300D9C500 /* SaveNoteDBOperation.swift in Sources */,
 				B370D64722D8AD5800264AE1 /* Int+Extensions.swift in Sources */,

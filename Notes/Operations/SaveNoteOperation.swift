@@ -13,28 +13,24 @@ class SaveNoteOperation: AsyncOperation {
         saveToDb = SaveNoteDBOperation(note: note, notebook: notebook)
         
         super.init()
-        
+    
         addDependency(saveToDb)
+        
         dbQueue.addOperation(saveToDb)
         
-        saveToDb.completionBlock = {
-            let saveToBackend = SaveNotesBackendOperation(notes: notebook.notes)
+        self.saveToDb.completionBlock = {
+            let saveToBackend = SaveNotesBackendOperation(notes: self.saveToDb.notebook.notes)
             saveToBackend.completionBlock = {
-                switch saveToBackend.result! {
-                case .success:
-                    self.result = true
-                case .failure:
-                    self.result = false
-                }
                 self.finish()
             }
+            
+            self.addDependency(saveToBackend)
             backendQueue.addOperation(saveToBackend)
         }
         
     }
     
     override func main() {
-        result = saveToDb.result
-        finish()
+        self.result = saveToDb.result
     }
 }

@@ -17,7 +17,13 @@ class LoadNotesBackendOperation: BaseBackendOperation {
     var result: LoadNotesBackendResult?
     
     override func main() {
-        result = .failure(.unreachable)
-        finish()
+        NotesNetworkService.loadNotes { (notes) in
+            if let notes = notes {
+                self.result = .success(notes)
+            } else {
+                self.result = .failure(.unreachable)
+            }
+            self.finish()
+        }
     }
 }

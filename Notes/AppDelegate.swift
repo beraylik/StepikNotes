@@ -37,32 +37,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         DDLog.add(fileLogger)
     }
     
-    /// EXAMPLE
-    func operationsExample() {
-        let notebook = FileNotebook()
-        let backendQueue = OperationQueue()
-        let dbQueue = OperationQueue()
-        let commonQueue = OperationQueue()
-        
-        let newNote = Note(uid: "1", title: "Hello", content: "World", importance: .normal)
-        
-        let saveNoteOperation = SaveNoteOperation(
-            note: newNote,
-            notebook: notebook,
-            backendQueue: backendQueue,
-            dbQueue: dbQueue
-        )
-        commonQueue.addOperation(saveNoteOperation)
-        
-        let updateUI = BlockOperation {
-            print(saveNoteOperation.result ?? false)
-            print(notebook.notes)
-        }
-        OperationQueue.main.addOperation(updateUI)
-        
-        while RunLoop.current.run(mode: .default, before: .distantFuture) {}
-
-    }
-    
 }
 
