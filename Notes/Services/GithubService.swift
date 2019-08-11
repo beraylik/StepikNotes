@@ -17,8 +17,8 @@ class GithubService {
     
     // MARK: - Github Keys
     
-    let clientId = "490224167a89a4642d86"
-    let clientSecret = "584847584e32d5a447cb98de4dc22d62aa015298"
+    let clientId = ""
+    let clientSecret = ""
     var gitHubToken: String?
     var gistId: String?
     
