@@ -7,7 +7,7 @@ enum SaveNotesBackendResult {
 
 class SaveNotesBackendOperation: BaseBackendOperation {
     var result: SaveNotesBackendResult?
-    private var notes: [Note]
+    var notes: [Note]
     
     init(notes: [Note]) {
         self.notes = notes
@@ -16,14 +16,15 @@ class SaveNotesBackendOperation: BaseBackendOperation {
     
     override func main() {
         result = .failure(.unreachable)
+        self.finish()
         
-        NotesNetworkService.saveNotes(notes) { (isSaved) in
-            if isSaved {
-                self.result = .success
-            } else {
-                self.result = .failure(.unreachable)
-            }
-            self.finish()
-        }
+//        NotesNetworkService.saveNotes(notes) { (isSaved) in
+//            if isSaved {
+//                self.result = .success
+//            } else {
+//                self.result = .failure(.unreachable)
+//            }
+//            self.finish()
+//        }
     }
 }

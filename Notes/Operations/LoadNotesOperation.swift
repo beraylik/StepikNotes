@@ -7,19 +7,18 @@
 //
 
 import Foundation
+import CoreData
 
 class LoadNotesOperation: AsyncOperation {
-    private let notebook: FileNotebook
     private let loadFromDb: LoadNotesDBOperation
     private let loadFromBackend: LoadNotesBackendOperation
     
     private(set) var result: [Note]?
     
-    init(notebook: FileNotebook, backendQueue: OperationQueue, dbQueue: OperationQueue) {
-        self.notebook = notebook
+    init(context: NSManagedObjectContext, backendQueue: OperationQueue, dbQueue: OperationQueue) {
         
         loadFromBackend = LoadNotesBackendOperation()
-        loadFromDb = LoadNotesDBOperation(notebook: notebook)
+        loadFromDb = LoadNotesDBOperation(context: context)
         
         super.init()
         
@@ -40,7 +39,7 @@ class LoadNotesOperation: AsyncOperation {
         
         switch backendStatus {
         case let .success(value):
-            notebook.replace(withNotes: value)
+//            notebook.replace(withNotes: value)
             result = value
         case .failure:
             result = loadFromDb.result

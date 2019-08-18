@@ -1,4 +1,5 @@
 import Foundation
+import CoreData
 
 class SaveNoteOperation: AsyncOperation {
     private let saveToDb: SaveNoteDBOperation
@@ -6,12 +7,11 @@ class SaveNoteOperation: AsyncOperation {
     private(set) var result: Bool? = false
     
     init(note: Note,
-         notebook: FileNotebook,
+         context: NSManagedObjectContext,
          backendQueue: OperationQueue,
          dbQueue: OperationQueue) {
         
-        saveToDb = SaveNoteDBOperation(note: note, notebook: notebook)
-        
+        saveToDb = SaveNoteDBOperation(note: note, context: context)
         super.init()
     
         addDependency(saveToDb)
@@ -19,7 +19,7 @@ class SaveNoteOperation: AsyncOperation {
         dbQueue.addOperation(saveToDb)
         
         self.saveToDb.completionBlock = {
-            let saveToBackend = SaveNotesBackendOperation(notes: self.saveToDb.notebook.notes)
+            let saveToBackend = SaveNotesBackendOperation(notes: [note])
             saveToBackend.completionBlock = {
                 self.finish()
             }

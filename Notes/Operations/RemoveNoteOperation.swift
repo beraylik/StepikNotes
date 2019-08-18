@@ -7,28 +7,30 @@
 //
 
 import Foundation
+import CoreData
 
 class RemoveNoteOperation: AsyncOperation {
     private let note: Note
-    private let notebook: FileNotebook
     private let removeFromDb: RemoveNoteDBOperation
     private var saveToBackend: SaveNotesBackendOperation?
     
     private(set) var result: Bool? = false
     
-    init(note: Note, notebook: FileNotebook, backendQueue: OperationQueue, dbQueue: OperationQueue) {
+    init(note: Note,
+         context: NSManagedObjectContext,
+         backendQueue: OperationQueue,
+         dbQueue: OperationQueue)
+    {
         self.note = note
-        self.notebook = notebook
-
-        removeFromDb = RemoveNoteDBOperation(note: note, notebook: notebook)
         
+        removeFromDb = RemoveNoteDBOperation(note: note, context: context)
         super.init()
         
         addDependency(removeFromDb)
         dbQueue.addOperation(removeFromDb)
         
         removeFromDb.completionBlock = {
-            let saveToBackend = SaveNotesBackendOperation(notes: notebook.notes)
+            let saveToBackend = SaveNotesBackendOperation(notes: [note])
             saveToBackend.completionBlock = {
                 switch saveToBackend.result! {
                 case .success:

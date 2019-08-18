@@ -1,10 +1,11 @@
 import Foundation
+import CoreData
 
 class BaseDBOperation: AsyncOperation {
-    let notebook: FileNotebook
+    let context: NSManagedObjectContext
     
-    init(notebook: FileNotebook) {
-        self.notebook = notebook
+    init(context: NSManagedObjectContext) {
+        self.context = context
         super.init()
     }
 }

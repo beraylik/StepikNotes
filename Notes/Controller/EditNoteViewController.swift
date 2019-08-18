@@ -8,6 +8,7 @@
 
 import UIKit
 import CocoaLumberjack
+import CoreData
 
 class EditNoteViewController: UIViewController {
 
@@ -15,6 +16,7 @@ class EditNoteViewController: UIViewController {
     
     var note: Note?
     private var selectedColor: UIColor = .white
+    var context: NSManagedObjectContext?
     
     // MARK: - UI Outlets
     
@@ -74,13 +76,18 @@ class EditNoteViewController: UIViewController {
     }
     
     private func saveNote(_ note: Note) {
+        guard let context = context else {
+            print("NO CONTEXT")
+            self.navigationController?.popViewController(animated: true)
+            return
+        }
         let backendQueue = OperationQueue()
         let dbQueue = OperationQueue()
         let commonQueue = OperationQueue()
         
         let saveNoteOperation = SaveNoteOperation(
             note: note,
-            notebook: FileNotebook.shared,
+            context: context,
             backendQueue: backendQueue,
             dbQueue: dbQueue
         )

@@ -7,12 +7,14 @@
 //
 
 import UIKit
+import CoreData
 
 class NotesViewController: UIViewController {
     
     private let cellId = "CellId"
     private let cellClassName = "NoteTableViewCell"
     private var notes = [Note]()
+    private var context: NSManagedObjectContext?
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var editBarButton: UIBarButtonItem!
@@ -23,11 +25,16 @@ class NotesViewController: UIViewController {
         editBarButton.title = willEditing ? "Done" : "Edit"
     }
     
+    @IBAction func addNoteTapped(_ sender: Any) {
+        pushToEdit(note: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        context = CoreDataService.shared.persistentContainer.newBackgroundContext()
         setupTableView()
-        updateToken()
+//        updateToken()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -53,7 +60,7 @@ class NotesViewController: UIViewController {
     
     @objc private func updateToken() {
         guard let token = GithubService.shared.gitHubToken, !token.isEmpty else {
-            requestToken()
+             requestToken()
             return
         }
     }
@@ -64,13 +71,22 @@ class NotesViewController: UIViewController {
         present(requestTokenViewController, animated: false, completion: nil)
     }
     
+    private func pushToEdit(note: Note?) {
+        let storyboard = UIStoryboard.init(name: "Main", bundle: Bundle.main)
+        guard let editView = storyboard.instantiateViewController(withIdentifier: "EditNoteViewController") as? EditNoteViewController else { return }
+        editView.note = note
+        editView.context = self.context
+        navigationController?.pushViewController(editView, animated: true)
+    }
+    
     private func loadNotes() {
+        guard let context = context else { return }
         let backendQueue = OperationQueue()
         let dbQueue = OperationQueue()
         let commonQueue = OperationQueue()
         
         let loadNotesOperation = LoadNotesOperation(
-            notebook: FileNotebook.shared,
+            context: context,
             backendQueue: backendQueue,
             dbQueue: dbQueue
         )
@@ -88,15 +104,18 @@ class NotesViewController: UIViewController {
     }
     
     private func deleteNote(at indexPath: IndexPath) {
+        guard let context = context else { return }
+        
         let note = notes[indexPath.row]
         
         let backendQueue = OperationQueue()
         let dbQueue = OperationQueue()
         let commonQueue = OperationQueue()
         
+        
         let removeNoteOperation = RemoveNoteOperation(
             note: note,
-            notebook: FileNotebook.shared,
+            context: context,
             backendQueue: backendQueue,
             dbQueue: dbQueue
         )
@@ -139,10 +158,7 @@ extension NotesViewController: UITableViewDataSource {
 extension NotesViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let storyboard = UIStoryboard.init(name: "Main", bundle: Bundle.main)
-        guard let editView = storyboard.instantiateViewController(withIdentifier: "EditNoteViewController") as? EditNoteViewController else { return }
-        editView.note = notes[indexPath.row]
-        navigationController?.pushViewController(editView, animated: true)
+        pushToEdit(note: notes[indexPath.row])
     }
     
 }
