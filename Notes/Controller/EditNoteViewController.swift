@@ -10,15 +10,21 @@ import UIKit
 import CocoaLumberjack
 import CoreData
 
+protocol EditNoteVCProtocol: class {
+    func saveCompleted()
+    func setText(title: String, content: String)
+    func setDate(_ date: Date)
+    func setNoteColor(_ color: UIColor)
+}
+
 class EditNoteViewController: UIViewController {
 
     // MARK: - Properties
     
-    var note: Note?
     private var selectedColor: UIColor = .white
-    var context: NSManagedObjectContext?
+    var presenter: EditNotePresenterProtocol!
     
-    // MARK: - UI Outlets
+    // MARK: - IB Outlets
     
     @IBOutlet weak var colorsStackView: UIStackView!
     @IBOutlet weak var contentView: UIView!
@@ -31,16 +37,14 @@ class EditNoteViewController: UIViewController {
     
     @IBOutlet var datePickerHeightConstraint: NSLayoutConstraint!
     
-    // MARK: - Interactions
+    // MARK: - IB Actions
     
     @IBAction func saveButtonTapped(_ sender: Any) {
         guard let title = titleTextField.text, !title.isEmpty else { return }
         guard let content = contentTextView.text, !content.isEmpty else { return }
         let expireDate: Date? = expireDateSwitch.isOn ? datePicker.date : nil
-        let color = selectedColor
         
-        let newNote = Note(uid: note?.uid, title: title, content: content, importance: .normal, color: color, selfDestruction: expireDate)
-        saveNote(newNote)
+        presenter.saveNoteItem(title: title, content: content, color: selectedColor, expireDate: expireDate)
     }
     
     @IBAction func dateSwitchChanged(_ sender: UISwitch) {
@@ -63,9 +67,10 @@ class EditNoteViewController: UIViewController {
     
     @IBAction func longPressRecognized(_ sender: UILongPressGestureRecognizer) {
         guard sender.state == .began else { return }
-        print("longPressRecognized")
         showColorPicker()
     }
+    
+    // MARK: - Interactions
     
     private func selectColorView(_ view: ColorBoxView) {
         colorsStackView.arrangedSubviews.forEach { (view) in
@@ -73,32 +78,6 @@ class EditNoteViewController: UIViewController {
             colorView.isSelected = false
         }
         view.isSelected = true
-    }
-    
-    private func saveNote(_ note: Note) {
-        guard let context = context else {
-            print("NO CONTEXT")
-            self.navigationController?.popViewController(animated: true)
-            return
-        }
-        let backendQueue = OperationQueue()
-        let dbQueue = OperationQueue()
-        let commonQueue = OperationQueue()
-        
-        let saveNoteOperation = SaveNoteOperation(
-            note: note,
-            context: context,
-            backendQueue: backendQueue,
-            dbQueue: dbQueue
-        )
-        commonQueue.addOperation(saveNoteOperation)
-        
-        let updateUI = BlockOperation { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
-        }
-        saveNoteOperation.completionBlock = {
-            OperationQueue.main.addOperation(updateUI)
-        }
     }
     
     // MARK: - ViewController Lifecycle
@@ -109,22 +88,7 @@ class EditNoteViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         setupViews()
-        setupData()
-    }
-    
-    private func setupData() {
-        guard let note = note else { return }
-        
-        titleTextField.text = note.title
-        contentTextView.text = note.content
-        if let date = note.selfDestruction {
-            expireDateSwitch.isOn = true
-            dateSwitchChanged(expireDateSwitch)
-            datePicker.date = date
-        }
-        if note.color != .white {
-           pickedColor(note.color)
-        }
+        presenter.fillViewContent()
     }
     
     // MARK: - Configure UI
@@ -186,7 +150,7 @@ class EditNoteViewController: UIViewController {
 extension EditNoteViewController: ColorPickerDelegate {
     
     func cancelPicker() {
-        // unused
+        navigationController?.popViewController(animated: true)
     }
     
     func pickedColor(_ color: UIColor) {
@@ -208,3 +172,29 @@ extension EditNoteViewController: ColorPickerDelegate {
     
 }
 
+// MARK: - EditNote Presenter Delegate
+
+extension EditNoteViewController: EditNoteVCProtocol {
+    
+    func saveCompleted() {
+        navigationController?.popViewController(animated: true)
+    }
+    
+    func setText(title: String, content: String) {
+        titleTextField.text = title
+        contentTextView.text = content
+    }
+    
+    func setDate(_ date: Date) {
+        expireDateSwitch.isOn = true
+        dateSwitchChanged(expireDateSwitch)
+        datePicker.date = date
+    }
+    
+    func setNoteColor(_ color: UIColor) {
+        if color != .white {
+            pickedColor(color)
+        }
+    }
+    
+}

@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/genrihberajlik/Development/Stepik/StepikNotes/Notes/Model/Model.xcmappingmodel">
-   </FileRef>
-   <FileRef
       location = "group:Notes.xcodeproj">
    </FileRef>
    <FileRef

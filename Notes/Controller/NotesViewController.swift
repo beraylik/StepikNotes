@@ -9,15 +9,26 @@
 import UIKit
 import CoreData
 
+protocol NotesVCProtocol: class {
+    func updateContent()
+    func removeRow(index: Int)
+}
+
 class NotesViewController: UIViewController {
+    
+    // MARK: - Properties
     
     private let cellId = "CellId"
     private let cellClassName = "NoteTableViewCell"
-    private var notes = [Note]()
-    private var context: NSManagedObjectContext?
+    
+    private var presenter: NotesPresenterProtocol!
+    
+    // MARK: - IB Outlets
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var editBarButton: UIBarButtonItem!
+    
+    // MARK: - IB Actions
     
     @IBAction func editButtonTapped(_ sender: Any) {
         let willEditing = !tableView.isEditing
@@ -26,25 +37,32 @@ class NotesViewController: UIViewController {
     }
     
     @IBAction func addNoteTapped(_ sender: Any) {
-        pushToEdit(note: nil)
+        pushToEdit(noteAtIndex: nil)
     }
+    
+    // MARK: - ViewController Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        context = CoreDataService.shared.persistentContainer.newBackgroundContext()
+        presenter = NotesPresenter()
+        presenter.setVCDelegate(self)
+        
         setupTableView()
+        
+        // Uncomment if you need Network saving
 //        updateToken()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        loadNotes()
+        presenter.loadNotes()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        print(#function)
-        FileNotebook.shared.saveToFile()
+        presenter.saveNotes()
     }
+    
+    // MARK: - Configure UI
     
     private func setupTableView() {
         let nib = UINib(nibName: cellClassName, bundle: Bundle.main)
@@ -71,63 +89,9 @@ class NotesViewController: UIViewController {
         present(requestTokenViewController, animated: false, completion: nil)
     }
     
-    private func pushToEdit(note: Note?) {
-        let storyboard = UIStoryboard.init(name: "Main", bundle: Bundle.main)
-        guard let editView = storyboard.instantiateViewController(withIdentifier: "EditNoteViewController") as? EditNoteViewController else { return }
-        editView.note = note
-        editView.context = self.context
-        navigationController?.pushViewController(editView, animated: true)
-    }
-    
-    private func loadNotes() {
-        guard let context = context else { return }
-        let backendQueue = OperationQueue()
-        let dbQueue = OperationQueue()
-        let commonQueue = OperationQueue()
-        
-        let loadNotesOperation = LoadNotesOperation(
-            context: context,
-            backendQueue: backendQueue,
-            dbQueue: dbQueue
-        )
-        commonQueue.addOperation(loadNotesOperation)
-        
-        let updateUI = BlockOperation { [weak self] in
-            if let notes = loadNotesOperation.result {
-                self?.notes = notes
-                self?.tableView.reloadData()
-            }
-        }
-        loadNotesOperation.completionBlock = {
-            OperationQueue.main.addOperation(updateUI)
-        }
-    }
-    
-    private func deleteNote(at indexPath: IndexPath) {
-        guard let context = context else { return }
-        
-        let note = notes[indexPath.row]
-        
-        let backendQueue = OperationQueue()
-        let dbQueue = OperationQueue()
-        let commonQueue = OperationQueue()
-        
-        
-        let removeNoteOperation = RemoveNoteOperation(
-            note: note,
-            context: context,
-            backendQueue: backendQueue,
-            dbQueue: dbQueue
-        )
-        commonQueue.addOperation(removeNoteOperation)
-        
-        let updateUI = BlockOperation { [weak self] in
-            self?.notes.remove(at: indexPath.row)
-            self?.tableView.deleteRows(at: [indexPath], with: .fade)
-        }
-        removeNoteOperation.completionBlock = {
-            OperationQueue.main.addOperation(updateUI)
-        }
+    private func pushToEdit(noteAtIndex: Int?) {
+        guard let editVC = presenter.editNoteVC(index: noteAtIndex) else { return }
+        navigationController?.pushViewController(editVC, animated: true)
     }
     
 }
@@ -138,17 +102,20 @@ extension NotesViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! NoteTableViewCell
-        cell.setData(notes[indexPath.row])
+        
+        let noteItem = presenter.getNotePresenter(at: indexPath.row)
+        cell.setNoteItem(noteItem)
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         guard editingStyle == .delete else { return }
-        deleteNote(at: indexPath)
+        presenter.deleteNote(index: indexPath.row)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return notes.count
+        return presenter.getNotesCount()
     }
     
 }
@@ -158,7 +125,22 @@ extension NotesViewController: UITableViewDataSource {
 extension NotesViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        pushToEdit(note: notes[indexPath.row])
+        pushToEdit(noteAtIndex: indexPath.row)
+    }
+    
+}
+
+// MARK: - NotesPresenter Delegate
+
+extension NotesViewController: NotesVCProtocol {
+    
+    func updateContent() {
+        tableView.reloadData()
+    }
+    
+    func removeRow(index: Int) {
+        let indexPath = IndexPath(row: index, section: 0)
+        tableView.deleteRows(at: [indexPath], with: .fade)
     }
     
 }
@@ -170,6 +152,6 @@ extension NotesViewController: AuthViewControllerDelegate {
         GithubService.shared.gitHubToken = token
     }
     func finishedAuth(successful: Bool) {
-        loadNotes()
+        presenter.loadNotes()
     }
 }

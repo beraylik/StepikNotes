@@ -48,7 +48,6 @@ class ColorPickerVC: UIViewController {
 extension ColorPickerVC: ColorPickerDelegate {
     func cancelPicker() {
         delegate?.cancelPicker()
-        navigationController?.popViewController(animated: true)
     }
     
     func pickedColor(_ color: UIColor) {

@@ -26,7 +26,7 @@ class NoteTableViewCell: UITableViewCell {
         colorView.backgroundColor = nil
     }
     
-    func setData(_ note: Note) {
+    func setNoteItem(_ note: NotePresenter) {
         titleLabel.text = note.title
         contentLabel.text = note.content
         colorView.backgroundColor = note.color
