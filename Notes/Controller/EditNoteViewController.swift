@@ -17,7 +17,7 @@ protocol EditNoteVCProtocol: class {
     func setNoteColor(_ color: UIColor)
 }
 
-class EditNoteViewController: UIViewController {
+final class EditNoteViewController: UIViewController {
 
     // MARK: - Properties
     
@@ -84,8 +84,7 @@ class EditNoteViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        setKeyboardObservers()
         
         setupViews()
         presenter.fillViewContent()
@@ -122,7 +121,12 @@ class EditNoteViewController: UIViewController {
     
     // MARK: - Keyboard handling
     
-    func adjustInsetForKeyboardShow(_ show: Bool, notification: Notification) {
+    private func setKeyboardObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    private func adjustInsetForKeyboardShow(_ show: Bool, notification: Notification) {
         let userInfo = notification.userInfo ?? [:]
         let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         let adjustmentHeight = keyboardFrame.height - view.safeAreaInsets.bottom
