@@ -14,9 +14,8 @@ class EditNoteViewController: UIViewController {
 
     // MARK: - Properties
     
-    var note: Note?
+    var viewModel: NoteViewModel!
     private var selectedColor: UIColor = .white
-    var context: NSManagedObjectContext?
     
     // MARK: - UI Outlets
     
@@ -37,10 +36,12 @@ class EditNoteViewController: UIViewController {
         guard let title = titleTextField.text, !title.isEmpty else { return }
         guard let content = contentTextView.text, !content.isEmpty else { return }
         let expireDate: Date? = expireDateSwitch.isOn ? datePicker.date : nil
-        let color = selectedColor
         
-        let newNote = Note(uid: note?.uid, title: title, content: content, importance: .normal, color: color, selfDestruction: expireDate)
-        saveNote(newNote)
+        viewModel.title = title
+        viewModel.content = content
+        viewModel.expireDate = expireDate
+        
+        viewModel.saveNote()
     }
     
     @IBAction func dateSwitchChanged(_ sender: UISwitch) {
@@ -58,7 +59,7 @@ class EditNoteViewController: UIViewController {
     @IBAction func didTapColorBox(_ sender: UITapGestureRecognizer) {
         guard let selectedBoxView = sender.view as? ColorBoxView else { return }
         selectColorView(selectedBoxView)
-        selectedColor = selectedBoxView.backgroundColor ?? .white
+        viewModel.color = selectedBoxView.backgroundColor ?? .white
     }
     
     @IBAction func longPressRecognized(_ sender: UILongPressGestureRecognizer) {
@@ -75,55 +76,29 @@ class EditNoteViewController: UIViewController {
         view.isSelected = true
     }
     
-    private func saveNote(_ note: Note) {
-        guard let context = context else {
-            print("NO CONTEXT")
-            self.navigationController?.popViewController(animated: true)
-            return
-        }
-        let backendQueue = OperationQueue()
-        let dbQueue = OperationQueue()
-        let commonQueue = OperationQueue()
-        
-        let saveNoteOperation = SaveNoteOperation(
-            note: note,
-            context: context,
-            backendQueue: backendQueue,
-            dbQueue: dbQueue
-        )
-        commonQueue.addOperation(saveNoteOperation)
-        
-        let updateUI = BlockOperation { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
-        }
-        saveNoteOperation.completionBlock = {
-            OperationQueue.main.addOperation(updateUI)
-        }
-    }
-    
     // MARK: - ViewController Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-        
+        setKeyboardObservers()
         setupViews()
         setupData()
+        
+        viewModel.didSaveNote = { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
     }
     
     private func setupData() {
-        guard let note = note else { return }
-        
-        titleTextField.text = note.title
-        contentTextView.text = note.content
-        if let date = note.selfDestruction {
+        titleTextField.text = viewModel.title
+        contentTextView.text = viewModel.content
+        if let date = viewModel.expireDate {
             expireDateSwitch.isOn = true
             dateSwitchChanged(expireDateSwitch)
             datePicker.date = date
         }
-        if note.color != .white {
-           pickedColor(note.color)
+        if viewModel.color != .white {
+           pickedColor(viewModel.color)
         }
     }
     
@@ -158,7 +133,12 @@ class EditNoteViewController: UIViewController {
     
     // MARK: - Keyboard handling
     
-    func adjustInsetForKeyboardShow(_ show: Bool, notification: Notification) {
+    private func setKeyboardObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    private func adjustInsetForKeyboardShow(_ show: Bool, notification: Notification) {
         let userInfo = notification.userInfo ?? [:]
         let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         let adjustmentHeight = keyboardFrame.height - view.safeAreaInsets.bottom
@@ -186,7 +166,7 @@ class EditNoteViewController: UIViewController {
 extension EditNoteViewController: ColorPickerDelegate {
     
     func cancelPicker() {
-        // unused
+        navigationController?.popViewController(animated: true)
     }
     
     func pickedColor(_ color: UIColor) {

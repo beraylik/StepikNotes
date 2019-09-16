@@ -41,6 +41,8 @@
 		F023D7D422FF56F100B132B4 /* NotesNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F023D7D322FF56F100B132B4 /* NotesNetworkService.swift */; };
 		F023D7D8230099B000B132B4 /* GithubAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = F023D7D7230099B000B132B4 /* GithubAuth.swift */; };
 		F023D7DA230099E000B132B4 /* Gist.swift in Sources */ = {isa = PBXBuildFile; fileRef = F023D7D9230099E000B132B4 /* Gist.swift */; };
+		F0515C1423302B4800785018 /* NotesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0515C1323302B4800785018 /* NotesViewModel.swift */; };
+		F0515C162330337D00785018 /* NoteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0515C152330337D00785018 /* NoteViewModel.swift */; };
 		F0D3243B22E2E64A00EF48A0 /* ColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D3243922E2E64A00EF48A0 /* ColorPickerView.swift */; };
 		F0D3243C22E2E64A00EF48A0 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D3243A22E2E64A00EF48A0 /* GradientView.swift */; };
 		F0D3243E22E2E6CF00EF48A0 /* ColorPickerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D3243D22E2E6CF00EF48A0 /* ColorPickerVC.swift */; };
@@ -105,6 +107,8 @@
 		F023D7D322FF56F100B132B4 /* NotesNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesNetworkService.swift; sourceTree = "<group>"; };
 		F023D7D7230099B000B132B4 /* GithubAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubAuth.swift; sourceTree = "<group>"; };
 		F023D7D9230099E000B132B4 /* Gist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gist.swift; sourceTree = "<group>"; };
+		F0515C1323302B4800785018 /* NotesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesViewModel.swift; sourceTree = "<group>"; };
+		F0515C152330337D00785018 /* NoteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteViewModel.swift; sourceTree = "<group>"; };
 		F0D3243922E2E64A00EF48A0 /* ColorPickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPickerView.swift; sourceTree = "<group>"; };
 		F0D3243A22E2E64A00EF48A0 /* GradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		F0D3243D22E2E6CF00EF48A0 /* ColorPickerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerVC.swift; sourceTree = "<group>"; };
@@ -223,13 +227,14 @@
 			isa = PBXGroup;
 			children = (
 				B3FFD74122C0BAB600295AAA /* AppDelegate.swift */,
-				B3FFD74522C0BAB600295AAA /* Main.storyboard */,
 				F023D7CC22FF161B00B132B4 /* Services */,
 				B33C6BC822F1629300D9C500 /* Operations */,
 				B3FFD75322C0BAC100295AAA /* Model */,
 				B3FFD75A22C3AA3B00295AAA /* View */,
+				F0515C1223302B3200785018 /* ViewModel */,
 				B3FFD75B22C3AA4000295AAA /* Controller */,
 				B3FFD76F22C9E06100295AAA /* Extensions */,
+				B3FFD74522C0BAB600295AAA /* Main.storyboard */,
 				B3FFD74822C0BAB800295AAA /* Assets.xcassets */,
 				B3FFD74D22C0BAB800295AAA /* Info.plist */,
 			);
@@ -310,6 +315,15 @@
 				F023D7D9230099E000B132B4 /* Gist.swift */,
 			);
 			path = GithubModels;
+			sourceTree = "<group>";
+		};
+		F0515C1223302B3200785018 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				F0515C1323302B4800785018 /* NotesViewModel.swift */,
+				F0515C152330337D00785018 /* NoteViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		F0D3243822E2E64A00EF48A0 /* ColorPicker */ = {
@@ -488,9 +502,11 @@
 				F0D3243B22E2E64A00EF48A0 /* ColorPickerView.swift in Sources */,
 				B33C6BDE22F1750100D9C500 /* LoadNotesOperation.swift in Sources */,
 				F0E51C0723098A4B00D4E777 /* Model.xcdatamodeld in Sources */,
+				F0515C1423302B4800785018 /* NotesViewModel.swift in Sources */,
 				B33C6BD822F1638800D9C500 /* LoadNotesBackendOperation.swift in Sources */,
 				B3FFD74222C0BAB600295AAA /* AppDelegate.swift in Sources */,
 				F0D3244522E318E400EF48A0 /* GalleryCell.swift in Sources */,
+				F0515C162330337D00785018 /* NoteViewModel.swift in Sources */,
 				F023D7D422FF56F100B132B4 /* NotesNetworkService.swift in Sources */,
 				B33C6BD622F1629300D9C500 /* SaveNotesBackendOperation.swift in Sources */,
 				B33C6BDC22F16DF200D9C500 /* RemoveNoteDBOperation.swift in Sources */,

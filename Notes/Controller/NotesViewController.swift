@@ -13,8 +13,7 @@ class NotesViewController: UIViewController {
     
     private let cellId = "CellId"
     private let cellClassName = "NoteTableViewCell"
-    private var notes = [Note]()
-    private var context: NSManagedObjectContext?
+    private var viewModel: NotesViewModel!
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var editBarButton: UIBarButtonItem!
@@ -26,24 +25,28 @@ class NotesViewController: UIViewController {
     }
     
     @IBAction func addNoteTapped(_ sender: Any) {
-        pushToEdit(note: nil)
+        pushToEdit(noteIndex: nil)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        context = CoreDataService.shared.persistentContainer.newBackgroundContext()
+        viewModel = NotesViewModel()
+        viewModel.didUpdateNotes = { [weak self] in
+            self?.tableView.reloadData()
+        }
+        
         setupTableView()
 //        updateToken()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        loadNotes()
+        viewModel.loadNotes()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         print(#function)
-        FileNotebook.shared.saveToFile()
+        viewModel.saveNotes()
     }
     
     private func setupTableView() {
@@ -60,7 +63,7 @@ class NotesViewController: UIViewController {
     
     @objc private func updateToken() {
         guard let token = GithubService.shared.gitHubToken, !token.isEmpty else {
-             requestToken()
+            requestToken()
             return
         }
     }
@@ -71,63 +74,12 @@ class NotesViewController: UIViewController {
         present(requestTokenViewController, animated: false, completion: nil)
     }
     
-    private func pushToEdit(note: Note?) {
+    private func pushToEdit(noteIndex: Int?) {
         let storyboard = UIStoryboard.init(name: "Main", bundle: Bundle.main)
         guard let editView = storyboard.instantiateViewController(withIdentifier: "EditNoteViewController") as? EditNoteViewController else { return }
-        editView.note = note
-        editView.context = self.context
+
+        editView.viewModel = viewModel.getNoteViewModel(index: noteIndex)
         navigationController?.pushViewController(editView, animated: true)
-    }
-    
-    private func loadNotes() {
-        guard let context = context else { return }
-        let backendQueue = OperationQueue()
-        let dbQueue = OperationQueue()
-        let commonQueue = OperationQueue()
-        
-        let loadNotesOperation = LoadNotesOperation(
-            context: context,
-            backendQueue: backendQueue,
-            dbQueue: dbQueue
-        )
-        commonQueue.addOperation(loadNotesOperation)
-        
-        let updateUI = BlockOperation { [weak self] in
-            if let notes = loadNotesOperation.result {
-                self?.notes = notes
-                self?.tableView.reloadData()
-            }
-        }
-        loadNotesOperation.completionBlock = {
-            OperationQueue.main.addOperation(updateUI)
-        }
-    }
-    
-    private func deleteNote(at indexPath: IndexPath) {
-        guard let context = context else { return }
-        
-        let note = notes[indexPath.row]
-        
-        let backendQueue = OperationQueue()
-        let dbQueue = OperationQueue()
-        let commonQueue = OperationQueue()
-        
-        
-        let removeNoteOperation = RemoveNoteOperation(
-            note: note,
-            context: context,
-            backendQueue: backendQueue,
-            dbQueue: dbQueue
-        )
-        commonQueue.addOperation(removeNoteOperation)
-        
-        let updateUI = BlockOperation { [weak self] in
-            self?.notes.remove(at: indexPath.row)
-            self?.tableView.deleteRows(at: [indexPath], with: .fade)
-        }
-        removeNoteOperation.completionBlock = {
-            OperationQueue.main.addOperation(updateUI)
-        }
     }
     
 }
@@ -138,17 +90,22 @@ extension NotesViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! NoteTableViewCell
-        cell.setData(notes[indexPath.row])
+        
+        let noteVM = viewModel.getNoteViewModel(index: indexPath.row)
+        cell.titleLabel.text = noteVM.title
+        cell.contentLabel.text = noteVM.content
+        cell.colorView.backgroundColor = noteVM.color
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         guard editingStyle == .delete else { return }
-        deleteNote(at: indexPath)
+        viewModel.deleteNote(index: indexPath.row)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return notes.count
+        return viewModel.notesCount
     }
     
 }
@@ -158,7 +115,7 @@ extension NotesViewController: UITableViewDataSource {
 extension NotesViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        pushToEdit(note: notes[indexPath.row])
+        pushToEdit(noteIndex: indexPath.row)
     }
     
 }
@@ -170,6 +127,6 @@ extension NotesViewController: AuthViewControllerDelegate {
         GithubService.shared.gitHubToken = token
     }
     func finishedAuth(successful: Bool) {
-        loadNotes()
+        viewModel.loadNotes()
     }
 }
