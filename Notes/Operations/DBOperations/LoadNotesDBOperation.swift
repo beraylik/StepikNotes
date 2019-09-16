@@ -18,7 +18,7 @@ class LoadNotesDBOperation: BaseDBOperation {
         do {
             let notesEntities = try context.fetch(request)
             let notes = notesEntities.compactMap { (entity) -> Note? in
-                guard let uid = entity.uid, let title = entity.title, let content = entity.title else {
+                guard let uid = entity.uid, let title = entity.title, let content = entity.content else {
                     return nil
                 }
                 let importance = Importance(rawValue: entity.importance ?? "") ?? .normal
